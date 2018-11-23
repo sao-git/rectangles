@@ -1,14 +1,10 @@
-extern crate num;
+use num_integer::Integer;
+use num_rational::Rational;
+use shapes::ratio::Ratio;
 
-use num::{PrimInt, Integer, Rational};
-
-pub trait Ratio {
-    fn ratio(&self) -> Rational;
-}
-
-struct Rectangle {
-    height: u32,
-    width: u32,
+pub struct Rectangle {
+    pub height: u32,
+    pub width: u32,
 }
 
 //impl Rectangle {
