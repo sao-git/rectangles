@@ -1,42 +1,60 @@
 extern crate num;
 
-//use num::PrimInt;
-use num::{PrimInt, Integer};
+use num::{PrimInt, Integer, Rational};
 
-#[derive(Debug)]
+pub trait Ratio {
+    fn ratio(&self) -> Rational;
+}
+
 struct Rectangle {
     height: u32,
     width: u32,
 }
 
-impl Rectangle {
-    fn area(&self) -> u32 {
-        self.width * self.height
-    }
+//impl Rectangle {
+//}
 
-    fn can_hold(&self, other: &Rectangle) -> bool {
-        self.width > other.width && self.height > other.height
-    }
-
-    fn square(size: u32) -> Rectangle {
-        Rectangle { width: size, height: size }
+impl Ratio for Rectangle {
+    fn ratio(&self) -> Rational
+    where u32: Integer {
+        let gcd = self.width.gcd(&self.height);
+        Rational::new(
+            (self.width / gcd) as isize,
+            (self.height / gcd) as isize
+        )
     }
 }
 
 struct Screen {
     diagonal: f64,
-    height: u32,
-    width: u32,
+    dimensions: Rectangle,
+}
+
+impl Ratio for Screen {
+    fn ratio(&self) -> Rational {
+        self.dimensions.ratio()
+    }
 }
 
 impl Screen {
-    fn area(&self) -> f64
-    where u32: Integer {
-        let gcd = self.height.gcd(&self.width);
-        let width_ratio = self.width / gcd;
-        let height_ratio = self.height / gcd;
+    fn new(diagonal: f64, width: u32, height: u32) -> Screen {
+        Screen {
+            diagonal: diagonal,
+            dimensions: Rectangle {
+                width: width,
+                height: height,
+            }
+        }
+    }
 
-        let product = (height_ratio * width_ratio) as f64;
+    //fn side_length(&self) -> Rectangle {
+    //}
+
+    fn area(&self) -> f64 {
+        let ratio = self.dimensions.ratio();
+        let width_ratio = *ratio.numer();
+        let height_ratio = *ratio.denom();
+        let product = (width_ratio * height_ratio) as f64;
         let sum_2 = sum_of_squares(&[
             height_ratio,
             width_ratio
@@ -48,48 +66,20 @@ impl Screen {
 }
 
 fn main() {
-    let rect1 = Rectangle {
-        width:30, height:50
-    };
-    let rect2 = Rectangle {
-        width:10, height:40
-    };
-    let rect3 = Rectangle {
-        width:60, height:45
-    };
-
-    println!(
-        "The area of rect1 is {} square pixels.",
-        rect1.area()
-    );
-
-    println!("Can rect1 hold rect2? {}", rect1.can_hold(&rect2));
-    println!("Can rect1 hold rect3? {}", rect1.can_hold(&rect3));
-
-    let square1 = Rectangle::square(40);
-
-    println!("square1 = {:?}", square1);
-
-    let screen1 = Screen {
-        width:800, height:480, diagonal:7.0
-    };
-
     macro_rules! screen_print {
         () => ("The area of the screen is {:.4} square inches.")
     };
 
+    let screen1 = Screen::new(
+        7.0, 800, 480
+    );
     println!(screen_print!(), screen1.area());
 
-    let screen2 = Screen {
-        width:320, height:240, diagonal:3.2
-    };
-
+    let screen2 = Screen::new(
+        3.2, 320, 240
+    );
     println!(screen_print!(), screen2.area());
-
-    //println!("{:#?}", rect1);
 }
-
-
 
 fn sum_of_squares<T>(a: &[T]) -> T
     where T: PrimInt + std::iter::Sum<T> {
@@ -97,13 +87,3 @@ fn sum_of_squares<T>(a: &[T]) -> T
     a.iter().map(|x: &T| x.pow(2)).sum()
 }
 
-//fn gcd(x: u32, y: u32) -> u32 {
-//    let mut x = x;
-//    let mut y = y;
-//    while y != 0 {
-//        let t = y;
-//        y = x % y;
-//        x = t;
-//    }
-//    x
-//}
