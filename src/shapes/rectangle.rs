@@ -1,4 +1,3 @@
-use num_integer::Integer;
 use num_rational::Rational;
 use shapes::ratio::Ratio;
 
@@ -7,16 +6,19 @@ pub struct Rectangle {
     pub width: u32,
 }
 
-//impl Rectangle {
-//}
+#[allow(dead_code)]
+impl Rectangle {
+    pub fn area(&self) -> u32 {
+        self.width * self.height
+    }
+}
 
 impl Ratio for Rectangle {
-    fn ratio(&self) -> Rational
-    where u32: Integer {
-        let gcd = self.width.gcd(&self.height);
+    fn ratio(&self) -> Rational {
+        // Rational::new performs reduction, no need for finding gcd
         Rational::new(
-            (self.width / gcd) as isize,
-            (self.height / gcd) as isize
+            self.width as isize,
+            self.height as isize,
         )
     }
 }

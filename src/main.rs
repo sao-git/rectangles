@@ -1,4 +1,3 @@
-extern crate num_integer;
 extern crate num_rational;
 extern crate num_traits;
 mod shapes;

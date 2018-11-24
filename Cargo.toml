@@ -4,6 +4,5 @@ version = "0.1.0"
 authors = ["Sao Git <saogit@hotmail.com>"]
 
 [dependencies]
-num-integer = "0.1.39"
 num-rational = "0.2.1"
 num-traits = "0.2.6"
