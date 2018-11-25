@@ -9,8 +9,8 @@ use std::iter::Sum;
 pub fn sum_of_squares<'a, I, T>(vals: I) -> T
 where
     I: IntoIterator<Item = &'a T>,
-    &'a T: Pow<u32>,
-    T: 'a + Sum<<&'a T as Pow<u32>>::Output> {
+    &'a T: Pow<u8>,
+    T: 'a + Sum<<&'a T as Pow<u8>>::Output> {
     vals.into_iter()
         .map(|x| x.pow(2))
         .sum()

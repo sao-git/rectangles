@@ -27,4 +27,10 @@ fn main() {
         "Percent difference in areas: {:.4} %",
         percent_diff * 100.0
     );
+
+    let numbers = vec![2.3, 4.5, -23333.0123];
+    //let numbers = vec![2, 4, -23333];
+    let numbers_2 = math::sum_of_squares(&numbers);
+
+    println!("numbers_2 = {}", numbers_2);
 }
