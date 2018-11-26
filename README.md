@@ -2,9 +2,11 @@
 
 A “homework” repository, i.e. a simple demonstration of learning how to do a few intermediate things in Rust, including:
 
-* Custom types, traits, and modules
+* Custom types and traits
+* Modules
 * Generic programming, with trait boundaries
 * Lifetimes
+* Doc comments
 
 Compile with `cargo build`.
 

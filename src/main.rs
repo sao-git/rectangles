@@ -33,4 +33,9 @@ fn main() {
     let numbers_2 = math::sum_of_squares(&numbers);
 
     println!("numbers_2 = {}", numbers_2);
+
+    let numbers_3 = math::sum_of_squares(&[
+            2.0_f64.sqrt(),
+            2.0_f64.sqrt()]);
+    println!("numbers_3 = {}", numbers_3);
 }
