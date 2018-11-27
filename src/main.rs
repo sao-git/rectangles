@@ -5,11 +5,15 @@ mod math;
 
 use shapes::screen::Screen;
 
-fn main() {
-    macro_rules! screen_print {
-        () => ("The area of the screen is {:.4} square inches.")
-    };
+macro_rules! screen_print {
+    () => ("The area of the screen is {:.4} square inches.")
+}
 
+//macro_rules! debug_print {
+//    ($x:ident) => ({("$x = "), $x})
+//}
+
+fn main() {
     let screen1 = Screen::new(
         7.0, 800, 480
     );
@@ -30,12 +34,19 @@ fn main() {
 
     let numbers = vec![2.3, 4.5, -23333.0123];
     //let numbers = vec![2, 4, -23333];
-    let numbers_2 = math::sum_of_squares(&numbers);
+    let numbers_2 = math::sum_pow(&numbers, 5);
 
     println!("numbers_2 = {}", numbers_2);
 
-    let numbers_3 = math::sum_of_squares(&[
-            2.0_f64.sqrt(),
-            2.0_f64.sqrt()]);
+    let numbers_3 = math::sum_pow(&[
+            5.0_f64.sqrt(),
+            5.0_f64.sqrt()], 2);
     println!("numbers_3 = {}", numbers_3);
+
+    let numbers_4 = math::mean(&numbers, 5);
+    println!("numbers_4 = {}", numbers_4);
+
+    let numbers_5 = math::rms(&numbers);
+    println!("numbers_5 = {}", numbers_5);
+    //println!(debug_print!(numbers_5));
 }
