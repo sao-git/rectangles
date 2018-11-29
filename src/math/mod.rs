@@ -19,9 +19,10 @@ use std::ops::Div;
 /// ```
 pub fn sum_pow<'a, I, T>(vals: I, power: u8) -> T
 where
-    I: IntoIterator<Item = &'a T>,
+    I: IntoIterator<Item = &'a T> + Copy,
     &'a T: Pow<u8>,
     T: 'a + From<u32> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output> {
+
         let iter = vals.into_iter();
         match power {
             0 => T::from(iter.count() as u32), // Treating 0 to the 0th as 1
@@ -30,13 +31,18 @@ where
         }
 }
 
-/// The "generalized mean", i.e. where each element of `I` is raised to a `power`, then summed, then divided by the number of elements.
-/// Will use `power = 1` if default arguments are ever implemented for a "normal" average.
+/// The "generalized mean", i.e. where each element of `I` is raised to a
+/// `power`, then summed, then divided by the number of elements.
+///
+/// Will use `power = 1` if default arguments are ever implemented for a
+/// "normal" average.
 pub fn mean<'a, I, T>(vals: I, power: u8) -> T
 where
     I: IntoIterator<Item = &'a T> + Copy,
     &'a T: Pow<u8>,
-    T: 'a + From<u32> + Div + From<<T as Div>::Output> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output> {
+    T: 'a + From<u32> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output> +
+       Div + From<<T as Div>::Output> {
+
         let count = T::from(vals.into_iter().count() as u32);
         let sum = sum_pow(vals, power);
         T::from(sum / count)
@@ -47,7 +53,9 @@ pub fn rms<'a, I, T>(vals: I) -> f64
 where
     I: IntoIterator<Item = &'a T> + Copy,
     &'a T: Pow<u8>,
-    T: 'a + From<u32> + Div + From<<T as Div>::Output> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output>,
+    T: 'a + From<u32> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output> +
+       Div + From<<T as Div>::Output>,
     f64: From<T> {
-    f64::from(mean(vals, 2)).sqrt()
+
+        f64::from(mean(vals, 2)).sqrt()
 }
