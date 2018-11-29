@@ -31,12 +31,12 @@ impl Screen {
     // the sides in units of length
     pub fn side_lengths(&self) -> RealRectangle {
         let ratio = self.dimensions.ratio();
-        let x = *ratio.numer() as u32;
-        let y = *ratio.denom() as u32;
+        let x = *ratio.numer() as f64;
+        let y = *ratio.denom() as f64;
         let sum = math::sum_pow(&[x, y], 2) as f64;
         let a = self.diagonal / sum.sqrt();
 
-        RealRectangle::new(x as f64 * a, y as f64 * a)
+        RealRectangle::new(x * a, y * a)
     }
 
     pub fn area(&self) -> f64 {
