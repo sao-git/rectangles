@@ -63,7 +63,7 @@ fn main() {
     pintln!([=recfloat] "\n");
 
     println!(
-        "Demonstating use of Ratio<T>::approximate_float() to rationalize\n\
+        "Demonstrating use of Ratio<T>::approximate_float() to rationalize\n\
         a float division, then dividing the ratio to reconstruct the float.\n"
     );
 
