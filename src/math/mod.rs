@@ -1,7 +1,10 @@
 use num_traits::Pow;
 use std::iter::Sum;
-use std::ops::Div;
 
+pub fn percent_diff<T>(x: T, y: T) -> f64
+where f64: From<T> {
+    (f64::from(x) / f64::from(y) - 1.0) * 100.0
+}
 
 /// Returns the sum of the squared values in an iterable.
 ///
@@ -31,21 +34,21 @@ where
         }
 }
 
-/// The "generalized mean", i.e. where each element of `I` is raised to a
+/// The “generalized mean”, i.e. where each element of `I` is raised to a
 /// `power`, then summed, then divided by the number of elements.
 ///
 /// Will use `power = 1` if default arguments are ever implemented for a
-/// "normal" average.
-pub fn mean<'a, I, T>(vals: I, power: u8) -> T
+/// “normal” average.
+pub fn mean<'a, I, T>(vals: I, power: u8) -> f64
 where
     I: IntoIterator<Item = &'a T> + Copy,
     &'a T: Pow<u8>,
-    T: 'a + From<u32> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output> +
-       Div + From<<T as Div>::Output> {
+    T: 'a + From<u32> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output>,
+    f64: From<T> {
 
-        let count = T::from(vals.into_iter().count() as u32);
-        let sum = sum_pow(vals, power);
-        T::from(sum / count)
+        let count = vals.into_iter().count() as f64;
+        let sum = f64::from(sum_pow(vals, power));
+        sum / count
 }
 
 /// Root mean square, the square root of the square mean of the elements of I.
@@ -53,9 +56,8 @@ pub fn rms<'a, I, T>(vals: I) -> f64
 where
     I: IntoIterator<Item = &'a T> + Copy,
     &'a T: Pow<u8>,
-    T: 'a + From<u32> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output> +
-       Div + From<<T as Div>::Output>,
+    T: 'a + From<u32> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output>,
     f64: From<T> {
 
-        f64::from(mean(vals, 2)).sqrt()
+        mean(vals, 2).sqrt()
 }

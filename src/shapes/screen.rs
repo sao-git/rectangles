@@ -25,34 +25,22 @@ impl Screen {
         }
     }
 
-    // Helper function
-    //
     // x:y is the aspect ratio (assuming square pixels)
     //
     // a is the proportionality constant that relates the diagonal to
     // the sides in units of length
-    fn alpha(&self) -> (u32, u32, f64) {
+    pub fn side_lengths(&self) -> RealRectangle {
         let ratio = self.dimensions.ratio();
         let x = *ratio.numer() as u32;
         let y = *ratio.denom() as u32;
         let sum = math::sum_pow(&[x, y], 2) as f64;
         let a = self.diagonal / sum.sqrt();
 
-        (x, y, a)
-    }
-
-    pub fn side_lengths(&self) -> RealRectangle {
-        let (x, y, a) = self.alpha();
-        RealRectangle {
-            width: x as f64 * a,
-            height: y as f64 * a,
-        }
+        RealRectangle::new(x as f64 * a, y as f64 * a)
     }
 
     pub fn area(&self) -> f64 {
-        let (x, y, a) = self.alpha();
-        let product = (x * y) as f64;
-
-        product * a.powi(2)
+        let sides = self.side_lengths();
+        sides.width * sides.height
     }
 }
