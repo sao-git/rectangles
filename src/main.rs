@@ -1,5 +1,6 @@
 extern crate num_rational;
 extern crate num_traits;
+extern crate num_integer;
 #[macro_use] extern crate fomat_macros;
 mod shapes;
 mod math;
@@ -19,7 +20,7 @@ macro_rules! area_print {
 }
 
 fn main() {
-    let screen1 = Screen::new(7.0, 800, 480);
+    let screen1 = Screen::new_square(7.0, 800, 480);
     let screen1_area = screen1.area();
     let screen1_lengths = screen1.side_lengths();
     pintln!((=screen1_lengths.width)" inches,\n"
@@ -27,7 +28,7 @@ fn main() {
     area_print!("first", "screen", screen1_area, "inches");
     println!();
 
-    let screen2 = Screen::new(3.2, 320, 240);
+    let screen2 = Screen::new_square(3.2, 320, 240);
     let screen2_area = screen2.area();
     let screen2_lengths = screen2.side_lengths();
     pintln!((=screen2_lengths.width)" inches,\n"
