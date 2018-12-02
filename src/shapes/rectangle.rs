@@ -22,7 +22,7 @@ impl Rectangle {
 
 impl HasRatio for Rectangle {
     fn ratio(&self) -> Ratio<u32> {
-        // Rational32::new performs reduction, no need for finding gcd
+        // Ratio::new performs reduction, no need for finding gcd
         Ratio::new(self.width, self.height)
     }
 }

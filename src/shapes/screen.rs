@@ -85,10 +85,6 @@ cached!{
     SCREENALPHA;
     fn alpha(w: u32, h: u32, p: Ratio<u32>, diag: String)
         -> (u32, u32, String) = {
-        eprintln!("Debug: These lines should only show once per Screen \
-                  instance for all calls to side_lengths() or area().");
-        eprintln!("Debug: Calculating alpha({}, {}, {:?}, {})", w, h, p, diag);
-
         // Get initial x and y
         let (w_p, h_p) = (*p.numer(), *p.denom());
         let (x, y) = (w * w_p, h * h_p);
@@ -96,13 +92,10 @@ cached!{
         // Reduce to a ratio
         let gcd = x.gcd(&y);
         let (x, y) = (x / gcd, y / gcd);
-        epintln!("Debug: x:y = " (x)":"(y));
 
         // Calculate a and return (x, y, a)
         let sum = (x.pow(2) + y.pow(2)) as f64;
-        epintln!("Debug: " (=sum));
         let a = f64::from_str(&diag).unwrap() / sum.sqrt();
-        epintln!("Debug: " (=a));
         (x, y, fomat!({a:e}))
     }
 }
