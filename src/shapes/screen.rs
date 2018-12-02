@@ -4,6 +4,10 @@ use shapes::ratio::HasRatio;
 use shapes::rectangle::{Rectangle, RealRectangle};
 use std::str::FromStr;
 
+macro_rules! destring {
+    ($x:expr) => { f64::from_str(&$x).unwrap() }
+}
+
 pub struct Screen {
     diagonal: String,
     pixel_aspect: Ratio<u32>,
@@ -41,7 +45,7 @@ impl Screen {
     }
 
     pub fn diagonal(&self) -> f64 {
-        f64::from_str(&self.diagonal).unwrap()
+        destring!(self.diagonal)
     }
 
     pub fn pixel_aspect(&self) -> &Ratio<u32> {
@@ -59,10 +63,7 @@ impl Screen {
             self.pixel_aspect,
             self.diagonal.clone()
         );
-        RealRectangle::new(
-            f64::from_str(&x).unwrap(),
-            f64::from_str(&y).unwrap()
-        )
+        RealRectangle::new(destring!(x), destring!(y))
     }
 
     pub fn area(&self) -> f64 {
@@ -97,7 +98,7 @@ cached!{
 
         // Calculate a and return (x * a, y * a)
         let sum = (x.pow(2) + y.pow(2)) as f64;
-        let a = f64::from_str(&diag).unwrap() / sum.sqrt();
+        let a = destring!(diag) / sum.sqrt();
         (fomat!({(x as f64 * a):e}), fomat!({(y as f64 * a):e}))
     }
 }
