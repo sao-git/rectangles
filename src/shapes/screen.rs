@@ -53,14 +53,16 @@ impl Screen {
     }
 
     pub fn side_lengths(&self) -> RealRectangle {
-        let (x, y, a) = alpha(
+        let (x, y) = alpha(
             self.pixel_dimensions.width,
             self.pixel_dimensions.height,
             self.pixel_aspect,
             self.diagonal.clone()
         );
-        let a = f64::from_str(&a).unwrap();
-        RealRectangle::new(x as f64 * a, y as f64 * a)
+        RealRectangle::new(
+            f64::from_str(&x).unwrap(),
+            f64::from_str(&y).unwrap()
+        )
     }
 
     pub fn area(&self) -> f64 {
@@ -84,7 +86,7 @@ impl Screen {
 cached!{
     SCREENALPHA;
     fn alpha(w: u32, h: u32, p: Ratio<u32>, diag: String)
-        -> (u32, u32, String) = {
+        -> (String, String) = {
         // Get initial x and y
         let (w_p, h_p) = (*p.numer(), *p.denom());
         let (x, y) = (w * w_p, h * h_p);
@@ -96,6 +98,6 @@ cached!{
         // Calculate a and return (x, y, a)
         let sum = (x.pow(2) + y.pow(2)) as f64;
         let a = f64::from_str(&diag).unwrap() / sum.sqrt();
-        (x, y, fomat!({a:e}))
+        (fomat!({(x as f64 * a):e}), fomat!({(y as f64 * a):e}))
     }
 }
