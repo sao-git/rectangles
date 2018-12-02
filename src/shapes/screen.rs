@@ -95,7 +95,7 @@ cached!{
         let gcd = x.gcd(&y);
         let (x, y) = (x / gcd, y / gcd);
 
-        // Calculate a and return (x, y, a)
+        // Calculate a and return (x * a, y * a)
         let sum = (x.pow(2) + y.pow(2)) as f64;
         let a = f64::from_str(&diag).unwrap() / sum.sqrt();
         (fomat!({(x as f64 * a):e}), fomat!({(y as f64 * a):e}))
