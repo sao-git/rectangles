@@ -5,10 +5,11 @@ few intermediate things in Rust, including:
 
 * Custom types and traits
 * Modules
-* Generic programming, with trait boundaries
+* Generic programming with trait boundaries
 * Lifetimes
 * Doc comments
 * Custom macros
+* Memoization using the `cached` crate
 
 Compile with `cargo build`.
 

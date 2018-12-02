@@ -1,5 +1,5 @@
-use num_rational::Rational32;
+use num_rational::Ratio;
 
 pub trait HasRatio {
-    fn ratio(&self) -> Rational32;
+    fn ratio(&self) -> Ratio<u32>;
 }

@@ -1,27 +1,27 @@
-use math;
 use num_integer::Integer;
-use num_rational::Rational32;
+use num_rational::Ratio;
 use shapes::ratio::HasRatio;
 use shapes::rectangle::{Rectangle, RealRectangle};
+use std::str::FromStr;
 
 pub struct Screen {
-    diagonal: f64,
-    pixel_aspect: Rational32,
-    dimensions: Rectangle,
+    diagonal: String,
+    pixel_aspect: Ratio<u32>,
+    pixel_dimensions: Rectangle,
 }
 
 impl HasRatio for Screen {
-    fn ratio(&self) -> Rational32 {
-        self.dimensions.ratio()
+    fn ratio(&self) -> Ratio<u32> {
+        self.pixel_dimensions.ratio()
     }
 }
 
 impl Screen {
     pub fn new_square(diagonal: f64, width: u32, height: u32) -> Screen {
         Screen {
-            diagonal: diagonal,
-            pixel_aspect: Rational32::new(1, 1),
-            dimensions: Rectangle {
+            diagonal: fomat!({diagonal:e}),
+            pixel_aspect: Ratio::new(1, 1),
+            pixel_dimensions: Rectangle {
                 width: width,
                 height: height,
             },
@@ -31,44 +31,78 @@ impl Screen {
     pub fn new(diagonal: f64, width: u32, height: u32,
                pixel_width: u32, pixel_height: u32) -> Screen {
         Screen {
-            diagonal: diagonal,
-            pixel_aspect: Rational32::new(
-                pixel_width as i32,
-                pixel_height as i32
-            ),
-            dimensions: Rectangle {
+            diagonal: fomat!({diagonal:e}),
+            pixel_aspect: Ratio::new(pixel_width, pixel_height),
+            pixel_dimensions: Rectangle {
                 width: width,
                 height: height,
             },
         }
     }
 
-    /// x:y is (when reduced) the picture aspect ratio, equal to:
-    ///
-    /// _number of horizontal pixels * pixel aspect width_
-    /// number of vertical pixels * pixel aspect height
-    ///
-    /// a is the proportionality constant that relates the diagonal to
-    /// the sides of the screen in units of length
+    pub fn diagonal(&self) -> f64 {
+        f64::from_str(&self.diagonal).unwrap()
+    }
+
+    pub fn pixel_aspect(&self) -> &Ratio<u32> {
+        &self.pixel_aspect
+    }
+
+    pub fn pixel_dimensions(&self) -> &Rectangle {
+        &self.pixel_dimensions
+    }
+
     pub fn side_lengths(&self) -> RealRectangle {
-        // Get initial x and y
-        let x = self.dimensions.width * *self.pixel_aspect.numer() as u32;
-        let y = self.dimensions.height * *self.pixel_aspect.denom() as u32;
-
-        // Reduce to a ratio
-        let gcd = x.gcd(&y);
-        let x = x / gcd;
-        let y = y / gcd;
-
-        // Calculate `a`
-        let sum = math::sum_pow(&[x, y], 2) as f64;
-        let a = self.diagonal / sum.sqrt();
-
+        let (x, y, a) = alpha(
+            self.pixel_dimensions.width,
+            self.pixel_dimensions.height,
+            self.pixel_aspect,
+            self.diagonal.clone()
+        );
+        let a = f64::from_str(&a).unwrap();
         RealRectangle::new(x as f64 * a, y as f64 * a)
     }
 
     pub fn area(&self) -> f64 {
         let sides = self.side_lengths();
         sides.width * sides.height
+    }
+}
+
+// Memoized helper function `alpha()`
+//
+// `x`:`y` is (when reduced) the picture aspect ratio, equal to:
+//
+// _number of horizontal pixels * pixel aspect width_
+// number of vertical pixels * pixel aspect height
+//
+// `a` is the proportionality constant that relates the diagonal to
+// the sides of the screen in units of length
+//
+// The input and output `f64`s are wrapped in `String` instances to satisfy
+// the `Eq` and `HashMap` trait requirements on `cached!` functions.
+cached!{
+    SCREENALPHA;
+    fn alpha(w: u32, h: u32, p: Ratio<u32>, diag: String)
+        -> (u32, u32, String) = {
+        eprintln!("Debug: These lines should only show once per Screen \
+                  instance for all calls to side_lengths() or area().");
+        eprintln!("Debug: Calculating alpha({}, {}, {:?}, {})", w, h, p, diag);
+
+        // Get initial x and y
+        let (w_p, h_p) = (*p.numer(), *p.denom());
+        let (x, y) = (w * w_p, h * h_p);
+
+        // Reduce to a ratio
+        let gcd = x.gcd(&y);
+        let (x, y) = (x / gcd, y / gcd);
+        epintln!("Debug: x:y = " (x)":"(y));
+
+        // Calculate a and return (x, y, a)
+        let sum = (x.pow(2) + y.pow(2)) as f64;
+        epintln!("Debug: " (=sum));
+        let a = f64::from_str(&diag).unwrap() / sum.sqrt();
+        epintln!("Debug: " (=a));
+        (x, y, fomat!({a:e}))
     }
 }

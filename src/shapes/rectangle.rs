@@ -1,4 +1,4 @@
-use num_rational::Rational32;
+use num_rational::Ratio;
 use shapes::ratio::HasRatio;
 
 pub struct Rectangle {
@@ -15,15 +15,15 @@ impl Rectangle {
         }
     }
 
-    pub fn area(&self) -> u32 {
-        self.width * self.height
+    pub fn area(&self) -> usize {
+        self.width as usize * self.height as usize
     }
 }
 
 impl HasRatio for Rectangle {
-    fn ratio(&self) -> Rational32 {
+    fn ratio(&self) -> Ratio<u32> {
         // Rational32::new performs reduction, no need for finding gcd
-        Rational32::new(self.width as i32, self.height as i32)
+        Ratio::new(self.width, self.height)
     }
 }
 
@@ -33,13 +33,11 @@ pub struct RealRectangle {
     pub height: f64,
 }
 
-/// Will return a positive ratio if it succeeds, -1/1 if not.
 impl HasRatio for RealRectangle {
-    fn ratio(&self) -> Rational32 {
-        match Rational32::approximate_float(self.width / self.height) {
-            Some(val) => val,
-            None => Rational32::new(-1, 1),
-        }
+    fn ratio(&self) -> Ratio<u32> {
+        let t: Ratio<i32> = Ratio::approximate_float(self.width / self.height)
+            .unwrap();
+        Ratio::new_raw(*t.numer() as u32, *t.denom() as u32)
     }
 }
 

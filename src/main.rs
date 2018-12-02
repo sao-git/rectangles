@@ -2,6 +2,7 @@ extern crate num_rational;
 extern crate num_traits;
 extern crate num_integer;
 #[macro_use] extern crate fomat_macros;
+#[macro_use] extern crate cached;
 mod shapes;
 mod math;
 
@@ -26,6 +27,7 @@ fn main() {
     pintln!((=screen1_lengths.width)" inches,\n"
             (=screen1_lengths.height)" inches");
     area_print!("first", "screen", screen1_area, "inches");
+    pintln!((=screen1.diagonal()));
     println!();
 
     let screen2 = Screen::new_square(3.2, 320, 240);
@@ -34,6 +36,7 @@ fn main() {
     pintln!((=screen2_lengths.width)" inches,\n"
             (=screen2_lengths.height)" inches");
     area_print!("second", "screen", screen2_area, "inches");
+    pintln!((=screen2.diagonal()));
     println!();
 
     pintln!("Percent difference in areas of screens: "
