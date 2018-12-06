@@ -1,5 +1,6 @@
 use num_traits::Pow;
 use std::iter::Sum;
+use rayon::prelude::*;
 
 pub fn percent_diff<T>(x: T, y: T) -> f64
 where f64: From<T> {
@@ -20,17 +21,19 @@ where f64: From<T> {
 /// let numbers_2 = math::sum_of_squares(&numbers);
 /// let numbers_3 = math::sum_of_squares(&[1.414, 1.414]);
 /// ```
-pub fn sum_pow<'a, I, T>(vals: I, power: u8) -> T
+pub fn sum_pow<I>(vals: I, power: u8) -> f64
 where
-    I: IntoIterator<Item = &'a T> + Copy,
-    &'a T: Pow<u8>,
-    T: 'a + From<u32> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output> {
+    I: IntoParallelIterator + Copy,
+    <I as IntoParallelIterator>::Item: Pow<u8>,
+    <<I as IntoParallelIterator>::Item as Pow<u8>>::Output: Send,
+    f64: Sum<<I as IntoParallelIterator>::Item> +
+    Sum<<<I as IntoParallelIterator>::Item as Pow<u8>>::Output> {
 
-        let iter = vals.into_iter();
+        let iter = vals.into_par_iter();
         match power {
-            0 => T::from(iter.count() as u32), // Treating 0 to the 0th as 1
+            0 => iter.count() as f64, // Treating 0 to the 0th as 1
             1 => iter.sum(),
-            _ => iter.map(|x| x.pow(power)).sum()
+            _ => iter.map(|x| x.pow(power)).sum(),
         }
 }
 
@@ -39,25 +42,27 @@ where
 ///
 /// Will use `power = 1` if default arguments are ever implemented for a
 /// “normal” average.
-pub fn mean<'a, I, T>(vals: I, power: u8) -> f64
+pub fn mean<I>(vals: I, power: u8) -> f64
 where
-    I: IntoIterator<Item = &'a T> + Copy,
-    &'a T: Pow<u8>,
-    T: 'a + From<u32> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output>,
-    f64: From<T> {
+    I: IntoParallelIterator + Copy,
+    <I as IntoParallelIterator>::Item: Pow<u8>,
+    <<I as IntoParallelIterator>::Item as Pow<u8>>::Output: Send,
+    f64: Sum<<I as IntoParallelIterator>::Item> +
+    Sum<<<I as IntoParallelIterator>::Item as Pow<u8>>::Output> {
 
-        let count = vals.into_iter().count() as f64;
-        let sum = f64::from(sum_pow(vals, power));
+        let count = vals.into_par_iter().count() as f64;
+        let sum = sum_pow(vals, power);
         sum / count
 }
 
 /// Root mean square, the square root of the square mean of the elements of I.
-pub fn rms<'a, I, T>(vals: I) -> f64
+pub fn rms<I>(vals: I) -> f64
 where
-    I: IntoIterator<Item = &'a T> + Copy,
-    &'a T: Pow<u8>,
-    T: 'a + From<u32> + Sum<&'a T> + Sum<<&'a T as Pow<u8>>::Output>,
-    f64: From<T> {
+    I: IntoParallelIterator + Copy,
+    <I as IntoParallelIterator>::Item: Pow<u8>,
+    <<I as IntoParallelIterator>::Item as Pow<u8>>::Output: Send,
+    f64: Sum<<I as IntoParallelIterator>::Item> +
+    Sum<<<I as IntoParallelIterator>::Item as Pow<u8>>::Output> {
 
         mean(vals, 2).sqrt()
 }

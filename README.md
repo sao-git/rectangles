@@ -9,7 +9,8 @@ few intermediate things in Rust, including:
 * Lifetimes
 * Doc comments
 * Custom macros
-* Memoization using the `cached` crate
+* Memoization using the [`cached`](https://docs.rs/cached/0.8.0/cached/) [crate](https://crates.io/crates/cached)
+* Parallelization with the [`rayon`](https://docs.rs/rayon/1.0.3/rayon/) [crate](https://crates.io/crates/rayon)
 
 Compile with `cargo build`.
 

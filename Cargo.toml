@@ -1,6 +1,6 @@
 [package]
 name = "rectangles"
-version = "0.1.5"
+version = "0.1.6"
 authors = ["Sao Git <saogit@hotmail.com>"]
 
 [dependencies]
@@ -9,3 +9,4 @@ num-integer = "0.1.39"
 num-traits = "0.2.6"
 fomat-macros = "0.2.1"
 cached = "0.8.0"
+rayon = "1.0.3"

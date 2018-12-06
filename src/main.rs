@@ -1,10 +1,15 @@
 extern crate num_rational;
 extern crate num_traits;
 extern crate num_integer;
+extern crate rayon;
 #[macro_use] extern crate fomat_macros;
 #[macro_use] extern crate cached;
 mod shapes;
 mod math;
+
+use std::time::Instant;
+
+use rayon::prelude::*;
 
 use shapes::rectangle::RealRectangle;
 use shapes::screen::Screen;
@@ -50,7 +55,7 @@ fn main() {
     let numbers_2 = math::sum_pow(&numbers, 5);
     pintln!("Fifth-order sum of `numbers` = "(numbers_2));
 
-    let numbers_3 = math::sum_pow(&[
+    let numbers_3 = math::sum_pow(&vec![
             5.0_f64.sqrt(),
             5.0_f64.sqrt()], 255);
     pintln!("255th-order sum of `[sqrt(5.0), sqrt(5.0)]` = "{numbers_3:e});
@@ -63,11 +68,35 @@ fn main() {
     pintln!("RMS of `numbers` = "(numbers_5)"\n\n");
     //println!(debug_print!(numbers_5));
 
+    let count = 2_u32.pow(30);
+    let numbers_6 = 0..count;
+    let scale = 25.0;
+    pintln!([=numbers_6]);
+    pintln!((=scale));
+    let t3 = Instant::now();
+    let numbers_7: f64 = numbers_6.into_par_iter()
+        .map(|x| ((x as f64).sin() * scale).powi(2))
+        .sum();
+    let t4 = Instant::now();
+    pintln!([=t4 - t3]);
+    pintln!([=numbers_7]);
+
+    //let num7_display: Vec<String> = numbers_7.iter()
+    //    .map(|x| fomat!({x:.4}))
+    //    .collect();
+    //pintln!([=num7_display]);
+    //let t3 = Instant::now();
+    //let numbers_8 = math::rms(numbers_7);
+    //let t4 = Instant::now();
+    //pintln!([=t4 - t3]);
+    //pintln!([=numbers_8]"\n\n");
+
+
     let recfloat = RealRectangle::new(3245.234, 2344.2344);
     pintln!([=recfloat] "\n");
 
     println!(
-        "Demonstrating use of Ratio<T>::approximate_float() to rationalize\n\
+        "Demonstrating use of Ratio::approximate_float() to rationalize\n\
         a float division, then dividing the ratio to reconstruct the float.\n"
     );
 
