@@ -68,18 +68,26 @@ fn main() {
     pintln!("RMS of `numbers` = "(numbers_5)"\n\n");
     //println!(debug_print!(numbers_5));
 
-    let count = 2_u32.pow(30);
+    let count = 2_u32.pow(28);
     let numbers_6 = 0..count;
-    let scale = 25.0;
+    let scale: f64 = 25.0;
     pintln!([=numbers_6]);
     pintln!((=scale));
-    let t3 = Instant::now();
-    let numbers_7: f64 = numbers_6.into_par_iter()
-        .map(|x| ((x as f64).sin() * scale).powi(2))
+
+    let t1 = Instant::now();
+    let numbers_7: f64 = numbers_6.into_iter()
+        .map(|x| ((x as f64).sin()).powi(2))
         .sum();
+    let t2 = Instant::now();
+    pintln!([=t2 - t1]);
+    let t3 = Instant::now();
+    let num7_final = (numbers_7 * scale.powi(2) / count as f64).sqrt();
     let t4 = Instant::now();
     pintln!([=t4 - t3]);
-    pintln!([=numbers_7]);
+    pintln!((=num7_final));
+    let num7_direct = scale / 2.0_f64.sqrt();
+    pintln!((=num7_direct));
+    pintln!({=(math::percent_diff(num7_direct, num7_final)):e}" %\n\n");
 
     //let num7_display: Vec<String> = numbers_7.iter()
     //    .map(|x| fomat!({x:.4}))
